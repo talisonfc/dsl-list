@@ -1,8 +1,22 @@
 grammar List;
-programa : comando+ ;
-comando : NOME '=' exp | 'print' exp ;
-exp : exp '.' exp | exp '+' exp | NOME | lista | INT | 'false' |  'true' ;
-lista : '[' exp (',' exp) * ']';
+programa : comando+ EOF;
+comando : NOME '=' exp  # expresion
+  | 'print' exp         # show
+  ;
+
+exp : exp '.' exp       # expNested
+  | exp '+' exp         # expSum
+  | NOME                # name
+  | lista               # collection
+  | INT                 # int
+  | 'false'             # false
+  | 'true'              # true
+  ;
+
+lista : '[' exp (',' exp) * ']' ;
+
 NOME : [a-zA-Z]+ ;
-INT : [0−9]+;
+
+INT : [0-9]+ ;
+
 WS : [ \t\r\n]+ -> skip ;

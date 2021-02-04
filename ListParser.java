@@ -152,25 +152,52 @@ public class ListParser extends Parser {
 	}
 
 	public static class ComandoContext extends ParserRuleContext {
-		public TerminalNode NOME() { return getToken(ListParser.NOME, 0); }
-		public ExpContext exp() {
-			return getRuleContext(ExpContext.class,0);
-		}
 		public ComandoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_comando; }
+	 
+		public ComandoContext() { }
+		public void copyFrom(ComandoContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class ExpresionContext extends ComandoContext {
+		public TerminalNode NOME() { return getToken(ListParser.NOME, 0); }
+		public ExpContext exp() {
+			return getRuleContext(ExpContext.class,0);
+		}
+		public ExpresionContext(ComandoContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ListListener ) ((ListListener)listener).enterComando(this);
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterExpresion(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ListListener ) ((ListListener)listener).exitComando(this);
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitExpresion(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitComando(this);
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitExpresion(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ShowContext extends ComandoContext {
+		public ExpContext exp() {
+			return getRuleContext(ExpContext.class,0);
+		}
+		public ShowContext(ComandoContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterShow(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitShow(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitShow(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -183,6 +210,7 @@ public class ListParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NOME:
+				_localctx = new ExpresionContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(13);
@@ -194,6 +222,7 @@ public class ListParser extends Parser {
 				}
 				break;
 			case T__1:
+				_localctx = new ShowContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(16);
@@ -218,32 +247,142 @@ public class ListParser extends Parser {
 	}
 
 	public static class ExpContext extends ParserRuleContext {
-		public TerminalNode NOME() { return getToken(ListParser.NOME, 0); }
-		public ListaContext lista() {
-			return getRuleContext(ListaContext.class,0);
+		public ExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
-		public TerminalNode INT() { return getToken(ListParser.INT, 0); }
+		@Override public int getRuleIndex() { return RULE_exp; }
+	 
+		public ExpContext() { }
+		public void copyFrom(ExpContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class ExpNestedContext extends ExpContext {
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
 		}
 		public ExpContext exp(int i) {
 			return getRuleContext(ExpContext.class,i);
 		}
-		public ExpContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_exp; }
+		public ExpNestedContext(ExpContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ListListener ) ((ListListener)listener).enterExp(this);
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterExpNested(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ListListener ) ((ListListener)listener).exitExp(this);
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitExpNested(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitExp(this);
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitExpNested(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpSumContext extends ExpContext {
+		public List<ExpContext> exp() {
+			return getRuleContexts(ExpContext.class);
+		}
+		public ExpContext exp(int i) {
+			return getRuleContext(ExpContext.class,i);
+		}
+		public ExpSumContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterExpSum(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitExpSum(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitExpSum(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NameContext extends ExpContext {
+		public TerminalNode NOME() { return getToken(ListParser.NOME, 0); }
+		public NameContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitName(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitName(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FalseContext extends ExpContext {
+		public FalseContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterFalse(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitFalse(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitFalse(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class TrueContext extends ExpContext {
+		public TrueContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterTrue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitTrue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitTrue(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class CollectionContext extends ExpContext {
+		public ListaContext lista() {
+			return getRuleContext(ListaContext.class,0);
+		}
+		public CollectionContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterCollection(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitCollection(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitCollection(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IntContext extends ExpContext {
+		public TerminalNode INT() { return getToken(ListParser.INT, 0); }
+		public IntContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).enterInt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ListListener ) ((ListListener)listener).exitInt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ListVisitor ) return ((ListVisitor<? extends T>)visitor).visitInt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -268,30 +407,46 @@ public class ListParser extends Parser {
 			switch (_input.LA(1)) {
 			case NOME:
 				{
+				_localctx = new NameContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(21);
 				match(NOME);
 				}
 				break;
 			case T__6:
 				{
+				_localctx = new CollectionContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(22);
 				lista();
 				}
 				break;
 			case INT:
 				{
+				_localctx = new IntContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(23);
 				match(INT);
 				}
 				break;
 			case T__4:
 				{
+				_localctx = new FalseContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(24);
 				match(T__4);
 				}
 				break;
 			case T__5:
 				{
+				_localctx = new TrueContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(25);
 				match(T__5);
 				}
@@ -313,7 +468,7 @@ public class ListParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 					case 1:
 						{
-						_localctx = new ExpContext(_parentctx, _parentState);
+						_localctx = new ExpNestedContext(new ExpContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_exp);
 						setState(28);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
@@ -325,7 +480,7 @@ public class ListParser extends Parser {
 						break;
 					case 2:
 						{
-						_localctx = new ExpContext(_parentctx, _parentState);
+						_localctx = new ExpSumContext(new ExpContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_exp);
 						setState(31);
 						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
