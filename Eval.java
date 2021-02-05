@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Eval extends ListBaseVisitor<String> {
 
-  Map<String, String> memory = new HashMap<String, String>();
+  Map<String, List<Object>> memory = new HashMap<String, List<Object>>();
   List<String> erros = new ArrayList<String>();
   
   /**
@@ -22,9 +22,9 @@ public class Eval extends ListBaseVisitor<String> {
 			prog += visit(cmd) + "\n";
 		}
 
-    if(erros.size() > 0){
-      return String.join("\n", erros);
-    }
+    // if(erros.size() > 0){
+    //   return String.join("\n", erros);
+    // }
 		return prog;
 	}
 	/**
@@ -35,7 +35,7 @@ public class Eval extends ListBaseVisitor<String> {
 	 */
 	@Override public String visitExpresion(ListParser.ExpresionContext ctx) {
     String value = visit(ctx.exp());
-    memory.putIfAbsent(ctx.NOME().getText(), value);
+    // memory.putIfAbsent(ctx.NOME().getText(), visitListAndReturnList(ctx.exp()));
 		return ctx.NOME().getText() + "=" + value;
 	}
 
@@ -45,7 +45,9 @@ public class Eval extends ListBaseVisitor<String> {
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public String visitShow(ListParser.ShowContext ctx) { return visitChildren(ctx); }
+	@Override public String visitShow(ListParser.ShowContext ctx) { 
+		return String.format("print(%s)",visit(ctx.exp())); 
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -55,7 +57,7 @@ public class Eval extends ListBaseVisitor<String> {
 	@Override public String visitExpNested(ListParser.ExpNestedContext ctx) { 
 		String left = visit(ctx.exp(0));
 		String right = visit(ctx.exp(1));
-		return String.format("print(%s + %s)", left, right);
+		return String.format("%s + %s", left, right);
 	}
 	/**
 	 * {@inheritDoc}
@@ -67,10 +69,10 @@ public class Eval extends ListBaseVisitor<String> {
 		String left = visit(ctx.exp(0));
 		String right = visit(ctx.exp(1));
 
-    if(!memory.containsKey(left)) erros.add(String.format("%s not found", left));
-    if(!memory.containsKey(right)) erros.add(String.format("%s not found", right));
+    // if(!memory.containsKey(left)) erros.add(String.format("%s not found", left));
+    // if(!memory.containsKey(right)) erros.add(String.format("%s not found", right));
 
-    return String.format("print(np.add(%s,%s))", left, right);
+    return String.format("np.add(%s,%s)", left, right);
 	}
 	/**
 	 * {@inheritDoc}
@@ -79,7 +81,7 @@ public class Eval extends ListBaseVisitor<String> {
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public String visitName(ListParser.NameContext ctx) { 
-    memory.putIfAbsent(ctx.NOME().getText(), "");
+    // memory.putIfAbsent(ctx.NOME().getText(), "");
 		return ctx.NOME().getText(); 
 	}
 	/**
@@ -134,7 +136,16 @@ public class Eval extends ListBaseVisitor<String> {
     }
 
     return "[" + String.join(",", values) + "]";
-    // return visitChildren(ctx); 
   }
+
+	public List<Object> visitListAndReturnList(ListParser.ListaContext ctx) { 
+		List<Object> objs = new ArrayList<Object>();
+
+		for(ListParser.ExpContext exp : ctx.exp()){
+      objs.add(visit(exp));
+    }
+
+    return objs;
+	}
 
 }

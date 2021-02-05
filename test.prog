@@ -1,5 +1,6 @@
 print 1 + false
 a = [1,2,true]
 b = [2,3,4]
+d = [a,b]
 print a.b
-print a + b + d
+print a + b
