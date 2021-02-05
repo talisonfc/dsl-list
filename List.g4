@@ -1,6 +1,7 @@
 grammar List;
 programa : comando+ EOF;
-comando : NOME '=' exp  # expresion
+
+comando : NOME '=' exp # expresion
   | 'print' exp         # show
   ;
 
